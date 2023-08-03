@@ -1,19 +1,45 @@
-from transitions import Machine
 import tkinter as tk
-import time
+from storage import Door
 
-class Door(object):
-    states = ['closed', 'opened', 'locked']
-    pin = '0000'
+class MyButton:
+    def __init__(self, win):
+        self.win = win
+        self.state_value = tk.StringVar()
+        self.state_value.set('Open')
+        self.main_button()
 
-    def __init__(self):
-        self.machine = Machine(model=self, states=Door.states, initial='locked')
-        self.machine.add_transition('open_storage', 'closed', 'opened')
-        self.machine.add_transition('close_storage', 'opened', 'closed')
-        self.machine.add_transition('block_storage', 'closed', 'locked')
-        self.machine.add_transition('unblock_storage', 'locked', 'closed')
+    def main_button(self):
+        tk.Checkbutton(self.win, textvariable=self.state_value, indicatoron=0, text='Close', offvalue="Open", onvalue='Close', command=self.change_state).grid(row=2, column=4, rowspan=4, sticky='nswe')
 
-door = Door()
+    def change_state(self):
+        if door.state == 'locked':
+            scoreboard.delete(0, tk.END)
+            scoreboard.insert(0, 'EROR')
+        else:
+            if self.state_value.get() == 'Open':
+                door.open_storage()
+                self.state_value.set('Close')
+                print(door.state)
+
+            else:
+                door.close_storage()
+                self.state_value.set('Open')
+                print(door.state)
+
+    def button(self):
+        col = 1
+        row = 1
+        for i in range(1, 10):
+            tk.Button(self.win, text="{}".format(i), command=lambda i=i: add_digit(i)).grid(row=row, column=col, sticky='we')
+            col += 1
+            if col == 4:
+                col = 1
+                row += 1
+        tk.Button(self.win, text="{}".format(0), command=lambda i=0: add_digit(i)).grid(row=row, column=col, sticky='we')
+        tk.Button(self.win, text="{}".format('=>'), command=lambda: unlock(scoreboard.get(), door.pin)).grid(row=row,
+                                                                                                        column=col + 1,
+                                                                                                        columnspan=2,
+                                                                                                        sticky='we')
 
 def blocking():
     if door.state != 'opened':
@@ -22,24 +48,22 @@ def blocking():
     else:
         blocking()
 
-def unlock(pin,code):
+def unlock(pin, code):
     if pin == code:
         door.unblock_storage()
         print(door.state)
-        time.sleep(45)
-        blocking()
-
+        #time.sleep(45)
+        #blocking()
     else:
         scoreboard.delete(0, tk.END)
         scoreboard.insert(0, 'Xpin')
 
-
-def light():
-    ''' должно менять цвет кнопки'''
-    if door.state == 'unblocked':
-       return 'green'
-    else:
-       return 'red'
+#def light(): # на доработку
+#    ''' должно менять цвет кнопки'''
+#    if door.state == 'unblocked':
+#       return 'green'
+#    else:
+#       return 'red'
 
 def add_digit(digit):
     '''
@@ -53,27 +77,15 @@ def add_digit(digit):
     scoreboard.insert(0,value)
     print(scoreboard.get())
 
-
+door = Door()
 win = tk.Tk()
 win.title('Хранилище')
 
-scoreboard = tk.Entry(win, justify=tk.LEFT,font=('Arial',15),width=4)
+scoreboard = tk.Entry(win, justify=tk.LEFT, font=('Arial',15), width=4)
 scoreboard.grid(row=1, column=4, sticky='e')
 win.grid_columnconfigure(4, minsize=4)
 
-col = 1
-row = 1
-for i in range(1, 10):
-    tk.Button(win, text="{}".format(i), command=lambda i=i: add_digit(i)).grid(row=row, column=col, sticky='we')
-    col += 1
-    if col == 4:
-        col = 1
-        row += 1
-tk.Button(win, text="{}".format(0),command=lambda i=0: add_digit(i)).grid(row=row, column=col, sticky='we')
-tk.Button(win, text="{}".format('<=|')).grid(row=row, column=col+1, columnspan=2, sticky='we')
-tk.Button(win, text="{}".format('O\np\ne\nn'),foreground=light(),command=lambda: unlock(scoreboard.get(),door.pin)).grid(row=2, column=4, rowspan=4, sticky='ns')
-
-print(scoreboard.get())
-
+but = MyButton(win)
+but.button()
 
 win.mainloop()
