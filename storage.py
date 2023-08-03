@@ -14,18 +14,18 @@ class Door(object):
         self.machine.add_transition('unblock_storage', 'locked', 'closed', before='start_timer')
 
     def start_timer(self):
-        print(1)
+        print('В доработке')
         #self.close_time = time.time()
 
     def is_locked(self):
-        print('111')
+        print('В доработке')
         #return (time.time() - self.close_time) > 45
 
-    def close_storage(self):
-        if self.is_locked():
-            self.block_storage()
-        else:
-            self.machine.set_state('closed')
+    #def close_storage(self):
+        #if self.is_locked():
+        #    self.block_storage()
+       # else:
+            #self.machine.set_state('closed')
 
 
 
