@@ -1,5 +1,6 @@
 import tkinter as tk
 from storage import Door
+#import time
 
 class MyButton:
     def __init__(self, win):
@@ -41,22 +42,20 @@ class MyButton:
                                                                                                         columnspan=2,
                                                                                                         sticky='we')
 
-def blocking():
-    if door.state != 'opened':
-        door.block_storage()
-        print(door.state)
-    else:
-        blocking()
 
 def unlock(pin, code):
     if pin == code:
         door.unblock_storage()
         print(door.state)
-        #time.sleep(45)
-        #blocking()
+    elif door.state == 'closed':
+
+        scoreboard.delete(0, tk.END)
+        scoreboard.insert(0, 'BLOK')
+
+
     else:
         scoreboard.delete(0, tk.END)
-        scoreboard.insert(0, 'Xpin')
+        scoreboard.insert(0, 'X-pin')
 
 #def light(): # на доработку
 #    ''' должно менять цвет кнопки'''
@@ -81,7 +80,7 @@ door = Door()
 win = tk.Tk()
 win.title('Хранилище')
 
-scoreboard = tk.Entry(win, justify=tk.LEFT, font=('Arial',15), width=4)
+scoreboard = tk.Entry(win, justify=tk.LEFT, font=('Arial',15), width=5)
 scoreboard.grid(row=1, column=4, sticky='e')
 win.grid_columnconfigure(4, minsize=4)
 

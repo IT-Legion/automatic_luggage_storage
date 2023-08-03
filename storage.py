@@ -1,4 +1,7 @@
+
 from transitions import Machine
+import time
+
 class Door(object):
     states = ['closed', 'opened', 'locked']
     pin = '0000'
@@ -6,10 +9,23 @@ class Door(object):
     def __init__(self):
         self.machine = Machine(model=self, states=Door.states, initial='locked')
         self.machine.add_transition('open_storage', 'closed', 'opened')
-        self.machine.add_transition('close_storage', 'opened', 'closed')
+        self.machine.add_transition('close_storage', 'opened', 'closed', before='start_timer')
         self.machine.add_transition('block_storage', 'closed', 'locked')
-        self.machine.add_transition('unblock_storage', 'locked', 'closed')
+        self.machine.add_transition('unblock_storage', 'locked', 'closed', before='start_timer')
 
+    def start_timer(self):
+        print(1)
+        #self.close_time = time.time()
+
+    def is_locked(self):
+        print('111')
+        #return (time.time() - self.close_time) > 45
+
+    def close_storage(self):
+        if self.is_locked():
+            self.block_storage()
+        else:
+            self.machine.set_state('closed')
 
 
 
